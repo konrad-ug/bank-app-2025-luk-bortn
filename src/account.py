@@ -44,3 +44,22 @@ class Account:
             year += 1800
 
         return f"{day:02d}-{month:02d}-{year}"
+
+
+    def outcoming_transfer(self, cash):
+        if cash <= 0 or self.balance <= cash:
+            return
+        else:
+            self.balance -= cash
+
+    def incoming_transfer(self, cash):
+        if cash > 0:
+            self.balance += cash
+        else:
+            return
+
+    def express_outcoming_transfer(self, cash):
+        if cash <= 0 or self.balance - cash < -1:
+            return
+        else:
+            self.balance -= (cash + 1)
