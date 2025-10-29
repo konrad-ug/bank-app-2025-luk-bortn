@@ -28,8 +28,9 @@ class TestAccount:
         assert account.promo_code is None # promo_code nie zaakceptowany przez brak wiek peselu
 
         account = Account("John", "Doe", "59061212345", "PROM_360")
-        assert account.promo_code is None # promo_code dla osoby urodzonej poniej niz rok 1960
+        assert account.promo_code == "PROM_360" and account.balance == 50 # promo_code dla osoby urodzonej poniej niz rok 1960
 
+        account = Account("John", "Doe", "59061212345", "PROM_360")
 
     def test_outcoming_transfer(self):
 
@@ -72,3 +73,27 @@ class TestAccount:
         user.balance = 500
         user.express_outcoming_transfer(-20) # ujemny transfer srodkow
         assert user.balance == 500
+
+    def test_get_birthday_date(self):
+
+        user = Account("A", "b", "", "promoCode")
+        assert user.get_birthday_date() is None
+
+        user = Account("A","b","90050100000","promoCode")
+        assert user.get_birthday_date() == "01-05-1990"
+
+        user = Account("A", "b", "04251300000", "promoCode")
+        assert user.get_birthday_date() == "13-05-2004"
+
+
+        user = Account("A", "b", "21450400000", "promoCode")
+        assert user.get_birthday_date() == "04-05-2121"
+
+        user = Account("A", "b", "88812400000", "promoCode")
+        assert user.get_birthday_date() == "24-01-1888"
+
+        user = Account("A", "b", "23610600000", "promoCode")
+        assert user.get_birthday_date() == "06-01-2223"
+
+        user = Account("A", "b", "88812400000", "promoCode")
+        assert user.get_birthday_date() == "24-01-1888"

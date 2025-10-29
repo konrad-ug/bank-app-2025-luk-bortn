@@ -16,7 +16,7 @@ class Account:
         birthday_str = self.get_birthday_date()
         if birthday_str is not None:
             year = int(birthday_str[6:])
-            if re.fullmatch(r"^PROM_\w{3}$", promo_code) and year > 1960:
+            if re.fullmatch(r"^PROM_\w{3}$", promo_code) and year < 1960:
                 self.promo_code = promo_code
                 self.balance += 50
 
