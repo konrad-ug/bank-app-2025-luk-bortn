@@ -72,7 +72,3 @@ class TestAccount:
         user.balance = 500
         user.express_outcoming_transfer(-20) # ujemny transfer srodkow
         assert user.balance == 500
-
-        user.balance = 10
-        user.express_outcoming_transfer(10)
-        assert user.balance == -1

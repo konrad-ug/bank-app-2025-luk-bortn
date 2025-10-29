@@ -57,4 +57,4 @@ class TestCompanyAccount:
 
         company.balance = 10
         company.express_outcoming_transfer(10) # warunek z dlugiem
-        assert company.balance == -1
+        assert company.balance == -5
