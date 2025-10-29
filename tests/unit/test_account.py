@@ -85,6 +85,9 @@ class TestAccount:
         user = Account("A", "b", "04251300000", "promoCode")
         assert user.get_birthday_date() == "13-05-2004"
 
+        user = Account("A", "b", "88812400000", "PROM360")
+        assert (user.get_birthday_date() == "24-01-1888" and user.balance == 0)
+
 
         user = Account("A", "b", "21450400000", "promoCode")
         assert user.get_birthday_date() == "04-05-2121"
@@ -97,3 +100,20 @@ class TestAccount:
 
         user = Account("A", "b", "88812400000", "promoCode")
         assert user.get_birthday_date() == "24-01-1888"
+
+    def test_apply_promo_code_old_user(self):
+        user = Account("a","B","40031512345","PROM_ABC")  # data: 15-03-1940
+        assert user.promo_code == "PROM_ABC"
+        assert user.balance == 50  # +50 zł
+
+    def test_apply_promo_code_young_user(self):
+        user = Account("A","B","04251312345", "PROM_ABC")  # data: 13-05-2004
+        assert user.promo_code is None
+        assert user.balance == 0  # bez zmian
+
+    def test_apply_promo_code_triggers_promo_and_bonus(self):
+        user = Account("","","40031512345","PROM_ABC")  # rok 1940
+        # Linia 20
+        assert user.promo_code == "PROM_ABC"
+        # Linia 21
+        assert user.balance == 50
