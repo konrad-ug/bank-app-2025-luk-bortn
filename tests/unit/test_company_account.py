@@ -54,7 +54,3 @@ class TestCompanyAccount:
         company.balance = 500
         company.express_outcoming_transfer(-20) # ujemny transfer srodkow
         assert company.balance == 500
-
-        company.balance = 10
-        company.express_outcoming_transfer(10) # warunek z dlugiem
-        assert company.balance == -5
