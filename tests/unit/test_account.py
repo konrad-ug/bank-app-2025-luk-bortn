@@ -1,6 +1,11 @@
 from src.account import Account
-
+import pytest
 class TestAccount:
+
+    @pytest.fixture
+    def account(self):
+        return Account("John", "Doe", "00000000000", "_360")
+
     def test_account_create(self):
         account = Account("John", "Doe", "12345678910","")
         assert account.first_name == "John" #sprawdzanie imienia
