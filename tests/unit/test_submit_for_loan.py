@@ -1,3 +1,4 @@
+"""imports"""
 import pytest
 from src.account import Account
 
@@ -5,6 +6,7 @@ from src.account import Account
 
 @pytest.fixture
 def account():
+    """pytest fixture"""
     return Account("John", "Doe", "00000000000", "_360")
 
 def test_submit_for_loan_last_three_positive(account):

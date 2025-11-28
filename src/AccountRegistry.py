@@ -1,5 +1,4 @@
 from src.account import Account
-
 class AccountRegistry:
 
     def __init__(self):
@@ -8,7 +7,7 @@ class AccountRegistry:
     def add_account(self, account: Account) -> None:
         self.accounts.append(account)
 
-    def get_account_by_pesel(self, pesel: str) -> Account | None:
+    def get_account_by_pesel(self, pesel: str):
         result = [el for el in self.accounts if el.pesel == pesel]
 
         if len(result) == 0:

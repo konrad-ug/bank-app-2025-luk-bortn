@@ -89,6 +89,3 @@ class Account:
 
         # jeśli żaden warunek nie został spełniony:
         return False
-
-
-
