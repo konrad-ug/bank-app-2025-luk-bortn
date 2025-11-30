@@ -1,9 +1,9 @@
 import re
 
 class Account:
-    def __init__(self, first_name, last_name, pesel, promo_code):
-        self.first_name = first_name
-        self.last_name = last_name
+    def __init__(self, name, surname, pesel, promo_code):
+        self.name = name
+        self.surname = surname
         self.balance = 0.0
         self.loan = 0.0
         self.operations = []
@@ -20,6 +20,14 @@ class Account:
             if re.fullmatch(r"^PROM_\w{3}$", promo_code) and year < 1960:
                 self.promo_code = promo_code
                 self.balance += 50
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "surname": self.surname,
+            "pesel": self.pesel,
+            "promo_code": self.promo_code
+        }
 
     def get_birthday_date(self):
         if self.pesel == "INVALID":

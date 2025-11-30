@@ -33,21 +33,23 @@ def create_account():
     return jsonify({"message": "Account created"}), 201
 
 
+
+
+
 @app.route("/api/accounts", methods=['GET'])
 def get_all_accounts():
-    """shows all account on site"""
-    print("Get all accounts request received")
     accounts = registry.get_all_accounts()
     accounts_data = [
         {
-            "name": acc.first_name,
-            "surname": acc.last_name,
+            "name": acc.name,
+            "surname": acc.surname,
             "pesel": acc.pesel,
             "balance": acc.balance
-         }
+        }
         for acc in accounts
     ]
     return jsonify(accounts_data), 200
+
 
 @app.route("/api/accounts/count", methods=['GET'])
 def get_account_count():
@@ -58,36 +60,61 @@ def get_account_count():
 
 
 @app.route("/api/accounts/<pesel>", methods=['GET'])
-def get_account_by_pesel(pesel):
-    """returns account with according pesel number"""
+def get_account(pesel):
+    accounts = registry.get_all_accounts()
 
-    result = registry.get_account_by_pesel(pesel)
-    if result is None:
-        return jsonify({"message": "Account not found"}), 404
-    return jsonify(result), 200
+    for acc in accounts:
+        if acc.pesel == pesel:
+            return jsonify({
+                "newObj": {
+                    "name": acc.name,
+                    "surname": acc.surname,
+                    "pesel": acc.pesel,
+                    "balance": acc.balance
+                }
+            }), 200
+
+    return jsonify({"message": "Account not found"}), 404
+
 
 @app.route("/api/accounts/<pesel>", methods=['PATCH'])
 def update_account(pesel):
-    """updates account with according pesel number"""
+    # 1. Pobierz dane do zmiany
+    props = request.get_json()
+    if props is None:
+        return jsonify({"message": "Invalid JSON"}), 400
+
+    # 2. Pobierz wszystkie konta
     accounts = registry.get_all_accounts()
-    new_obj = request.get_json()
+
+    # 3. Szukaj konta po peselu
     for account in accounts:
         if account.pesel == pesel:
-            if "name" in new_obj:
-                account.name = new_obj["name"]
-            if "surname" in new_obj:
-                account.surname = new_obj["surname"]
+            # 4. Aktualizuj pola, które są w props
+            if "name" in props:
+                account.name = props["name"]
+            if "surname" in props:
+                account.surname = props["surname"]
+            if "promo_code" in props:
+                account.promo_code = props["promo_code"]
+
+            # 5. Zwróć sukces
             return jsonify({"message": "Account updated"}), 200
 
+    # 6. Nie znaleziono konta
     return jsonify({"message": "Account not found"}), 404
 
 
 @app.route("/api/accounts/<pesel>", methods=['DELETE'])
 def delete_account(pesel):
-    """deletes account"""
-    initial_len = len(registry.get_all_accounts())
-    accounts = [el for el in registry.get_all_accounts() if el.pesel != pesel]
-    registry.accounts = accounts
-    if len(accounts) == initial_len:
+    """Deletes an account by pesel."""
+    accounts_before = len(registry.get_all_accounts())
+
+    registry.accounts = [acc for acc in registry.get_all_accounts() if acc.pesel != pesel]
+
+    accounts_after = len(registry.get_all_accounts())
+
+    if accounts_after == accounts_before:
         return jsonify({"message": "Account not found"}), 404
+
     return jsonify({"message": "Account deleted"}), 200

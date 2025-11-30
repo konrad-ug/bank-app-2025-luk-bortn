@@ -20,3 +20,5 @@ class AccountRegistry:
 
     def number_of_accounts(self) -> int:
         return len(self.accounts)
+
+
