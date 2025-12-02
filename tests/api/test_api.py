@@ -219,4 +219,27 @@ class TestApiCrud:
         requests.delete(self.url + "/" + obj["pesel"])
 
 
+    def test_delete_account_passed(self):
+        obj1 = self.acc1.copy()
+        obj1["pesel"] = "88888888888"
+        requests.post(self.url, json=obj1)
 
+        response = requests.delete(self.url + "/" + obj1["pesel"])
+
+        assert response.status_code == 200
+        assert  response.json()["message"] == "Account deleted"
+
+    def test_delete_account_denied(self):
+        obj1 = self.acc1.copy()
+        obj1["pesel"] = "77777777777"
+        requests.post(self.url, json=obj1)
+
+        obj2 = self.acc1.copy()
+        obj2["pesel"] = "77777777771"
+
+        response = requests.delete(self.url + "/" + obj2["pesel"])
+
+        assert response.status_code == 404
+        assert  response.json()["message"] == "Account not found"
+
+        requests.delete(self.url + "/" + obj1["pesel"])

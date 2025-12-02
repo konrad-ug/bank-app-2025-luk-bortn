@@ -108,13 +108,20 @@ def update_account(pesel):
 @app.route("/api/accounts/<pesel>", methods=['DELETE'])
 def delete_account(pesel):
     """Deletes an account by pesel."""
-    accounts_before = len(registry.get_all_accounts())
+    accounts = registry.get_all_accounts()   # pobieramy TYLKO raz
+    accounts_before = len(accounts)
 
-    registry.accounts = [acc for acc in registry.get_all_accounts() if acc.pesel != pesel]
+    # odfiltrowanie konta
+    new_accounts = [acc for acc in accounts if acc.pesel != pesel]
+    accounts_after = len(new_accounts)
 
-    accounts_after = len(registry.get_all_accounts())
-
+    # jeśli nic nie usunięto → konto nie istniało
     if accounts_after == accounts_before:
         return jsonify({"message": "Account not found"}), 404
 
+    # nadpisujemy listę tylko jeśli faktycznie coś się zmieniło
+    registry.accounts = new_accounts
+
     return jsonify({"message": "Account deleted"}), 200
+
+
