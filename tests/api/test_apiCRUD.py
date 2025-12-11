@@ -182,8 +182,8 @@ class TestApiCrud:
         # (opcjonalnie) sprawdź, czy dane faktycznie się zmieniły
         get_response = requests.get(self.url + "/" + obj["pesel"])
 
-        assert get_response.json()["newObj"]["name"] == "John"
-        assert get_response.json()["newObj"]["surname"] == "Smith"
+        assert get_response.json()["name"] == "John"
+        assert get_response.json()["surname"] == "Smith"
 
 
         requests.delete(self.url + "/" + obj["pesel"])
@@ -213,8 +213,8 @@ class TestApiCrud:
 
         # Sprawdź, że dane są nadal te same
         get_response = requests.get(self.url + "/" + obj["pesel"])
-        assert get_response.json()["newObj"]["name"] == obj["name"]
-        assert get_response.json()["newObj"]["surname"] == obj["surname"]
+        assert get_response.json()["name"] == obj["name"]
+        assert get_response.json()["surname"] == obj["surname"]
 
         requests.delete(self.url + "/" + obj["pesel"])
 

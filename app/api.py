@@ -33,9 +33,6 @@ def create_account():
     return jsonify({"message": "Account created"}), 201
 
 
-
-
-
 @app.route("/api/accounts", methods=['GET'])
 def get_all_accounts():
     accounts = registry.get_all_accounts()
@@ -66,12 +63,10 @@ def get_account(pesel):
     for acc in accounts:
         if acc.pesel == pesel:
             return jsonify({
-                "newObj": {
-                    "name": acc.name,
-                    "surname": acc.surname,
-                    "pesel": acc.pesel,
-                    "balance": acc.balance
-                }
+                "name": acc.name,
+                "surname": acc.surname,
+                "pesel": acc.pesel,
+                "balance": acc.balance
             }), 200
 
     return jsonify({"message": "Account not found"}), 404
@@ -136,11 +131,10 @@ def transfer(pesel):
         return jsonify({"message": "Account not found"}), 404
 
     # 2. Walidacja body
-    if body is None:
+    required_keys = {"type", "amount"}
+    body_keys = set(body.keys())
+    if body_keys != required_keys:
         return jsonify({"message": "Invalid JSON"}), 400
-
-    if "amount" not in body or "type" not in body:
-        return jsonify({"message": "Incomplete body"}), 400
 
     amount = body["amount"]
     transfer_type = body["type"]
@@ -150,7 +144,7 @@ def transfer(pesel):
         return jsonify({"message": "Invalid amount"}), 400
 
     # 4. Walidacja typu przelewu
-    allowed_types = ["incoming", "outgoing", "express"]
+    allowed_types = ("incoming", "outgoing", "express")
     if transfer_type not in allowed_types:
         return jsonify({"message": "Unknown transfer type"}), 400
 

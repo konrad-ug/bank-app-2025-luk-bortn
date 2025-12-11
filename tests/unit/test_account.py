@@ -8,8 +8,8 @@ class TestAccount:
 
     def test_account_create(self):
         account = Account("John", "Doe", "12345678910","")
-        assert account.first_name == "John" #sprawdzanie imienia
-        assert account.last_name == "Doe" # sprawdzanie nazwiska
+        assert account.name == "John" #sprawdzanie imienia
+        assert account.surname == "Doe" # sprawdzanie nazwiska
 
     def test_balance(self):
         account = Account("John", "Doe", "12345678910", "promo")

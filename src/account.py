@@ -26,7 +26,8 @@ class Account:
             "name": self.name,
             "surname": self.surname,
             "pesel": self.pesel,
-            "promo_code": self.promo_code
+            "promo_code": self.promo_code,
+            "balance": self.balance
         }
 
     def get_birthday_date(self):
@@ -70,11 +71,19 @@ class Account:
             return
 
     def express_outcoming_transfer(self, cash):
-        if cash <= 0 or self.balance - cash < -1:
-            return
+        fee = 1  # Opłata za przelew
+
+        # 1. Sprawdzamy, czy masz dość pieniędzy na KWOTĘ + OPŁATĘ
+        # Jeśli saldo po odjęciu wszystkiego byłoby ujemne -> BŁĄD
+        if cash <= 0 or (self.balance - (cash + fee)) < 0:
+            return False  # <--- Zmieniono None na False
+
         else:
-            self.balance -= (cash + 1)
-            self.operations.append(-1 * (cash + 1))
+            # 2. Zabieramy pieniądze
+            self.balance -= (cash + fee)
+            self.operations.append(-1 * (cash + fee))
+
+            return True  # <--- DODANO return True
 
     def submit_for_loan(self, amount):
         """Sprawdza warunki przyznania kredytu."""
