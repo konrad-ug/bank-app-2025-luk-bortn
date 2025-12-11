@@ -122,3 +122,14 @@ class TestAccount:
         assert user.promo_code == "PROM_ABC"
         # Linia 21
         assert user.balance == 50
+
+
+    def test_dict(self):
+        user = Account("A","B","40031512345","PROM_")
+        obj = user.to_dict()
+
+        assert user.name == obj["name"]
+        assert user.surname == obj["surname"]
+        assert user.balance == obj["balance"]
+        assert user.promo_code == obj["promo_code"]
+        assert user.pesel == obj["pesel"]

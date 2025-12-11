@@ -1,6 +1,9 @@
+import pytest
 from src.company_account import CompanyAccount
 
+@pytest.mark.skip(reason="Te testy łączą się z prawdziwym API - wyłączone na rzecz testów z mockami")
 class TestCompanyAccount:
+
 
     def test_company_account_create(self):
         company = CompanyAccount("company Inc.", "0123456789")
