@@ -1,4 +1,6 @@
+import datetime
 import re
+from lib.smtp import SMTPClient
 
 class Account:
     def __init__(self, name, surname, pesel, promo_code):
@@ -106,3 +108,10 @@ class Account:
 
         # jeśli żaden warunek nie został spełniony:
         return False
+
+    def send_history_via_email(self, email):
+        today = datetime.date.today()
+        subject = f"Account Transfer History {today}"
+        text = f"Personal account history: {self.operations}"
+
+        return SMTPClient.send(subject, text, email)

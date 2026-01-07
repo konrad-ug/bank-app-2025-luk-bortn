@@ -37,3 +37,13 @@ jobs:
     - name: Test with pytest
       run: |
         python3 -m pytest
+
+    - name: Start flask
+      run: |
+        export FLASK_APP=app/api.py
+        export FLASK_ENV=development
+        export PYTHONPATH=$GITHUB_WORKSPACE
+        flask run &
+    - name: Execute API tests
+      run: |
+        python3 -m pytest tests/api

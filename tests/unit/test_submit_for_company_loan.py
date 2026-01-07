@@ -9,14 +9,12 @@ def company_account(mocker):
     # Mówimy: "Dla klasy CompanyAccount, metoda check_status_Vat ma zawsze zwracać True"
     mocker.patch.object(CompanyAccount, 'check_status_Vat', return_value=True)
 
-    # 3. Teraz możemy bezpiecznie utworzyć obiekt, nawet ze zmyślonym NIPem
     return CompanyAccount("John Inc.", "0000000000")
 
 
 def test_not_enough_balance_for_loan(company_account):
     company_account.operations = [-1775]
     company_account.balance = 1000
-    # Upewnij się, że masz metodę take_loan w klasie CompanyAccount!
     assert company_account.take_loan(10000) == False
 
 

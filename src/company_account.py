@@ -1,8 +1,9 @@
 import os
 import datetime
 import requests
+from lib.smtp import SMTPClient
 
-class CompanyAccount: # pragma: no cover
+class CompanyAccount:
     def __init__(self, name, nip):
         self.name = name
         self.balance = 0.0
@@ -68,3 +69,10 @@ class CompanyAccount: # pragma: no cover
             return True
         else:
             return False
+
+    def send_history_via_email(self, email):
+        today = datetime.date.today()
+        subject = f"Account Transfer History {today}"
+        text = f"Company account history: {self.operations}"
+
+        return SMTPClient.send(subject, text, email)
