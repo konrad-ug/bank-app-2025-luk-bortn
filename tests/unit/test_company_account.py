@@ -1,5 +1,8 @@
 import pytest
 from src.company_account import CompanyAccount
+import datetime
+import os
+import requests
 
 @pytest.mark.skip(reason="Te testy łączą się z prawdziwym API - wyłączone na rzecz testów z mockami")
 class TestCompanyAccount:

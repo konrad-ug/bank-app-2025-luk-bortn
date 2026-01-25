@@ -24,30 +24,23 @@ class CompanyAccount:
 
         base_url = os.environ.get("BANK_APP_MF_URL", "https://wl-test.mf.gov.pl/")
 
-        if not base_url.endswith("/"):
-            base_url += "/"
-
         today = datetime.date.today()
         url = f'{base_url}api/search/nip/{nip}?date={today}'
 
-        try:
-            response = requests.get(url)
-            data = response.json()
 
-            print(f"--> [LOG API MF] Odpowiedź dla NIP {nip}: {data}")
+        response = requests.get(url)
+        data = response.json()
 
-            if "result" not in data or data["result"] is None:
-                return False
 
-            subject = data["result"]["subject"]
-            if subject is None:
-                return False
 
-            return subject["statusVat"] == "Czynny"
-
-        except requests.exceptions.RequestException as error:
-            print(f"--> [BŁĄD API] Nie udało się połączyć z MF: {error}")
+        if "result" not in data or data["result"] is None:
             return False
+
+        subject = data["result"]["subject"]
+        if subject is None:
+            return False
+
+        return subject["statusVat"] == "Czynny"
 
     def outcoming_transfer(self, amount):
         if amount > 0 and self.balance >= amount:

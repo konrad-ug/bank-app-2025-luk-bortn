@@ -2,8 +2,10 @@
 from flask import Flask, request, jsonify
 from src.AccountRegistry import AccountRegistry
 from src.account import Account
+from src.MongoAccountsRepository import MongoAccountsRepository
 app = Flask(__name__)
 registry = AccountRegistry()
+mongo_repo = MongoAccountsRepository()
 @app.route("/api/accounts", methods=['POST'])
 def create_account():
     """adds account to registry"""
@@ -164,4 +166,35 @@ def transfer(pesel):
 
     return jsonify({"message": "Transfer accepted"}), 200
 
+@app.route('/api/accounts/save', methods=['POST'])
+def save_accounts():
+    """
+    Zapisuje obecny stan kont z rejestru do bazy danych MongoDB.
+    """
+    try:
+        # Pobieramy aktualną listę kont z rejestru
+        current_accounts = registry.accounts
+
+        # Zapisujemy je do bazy przy użyciu repozytorium
+        mongo_repo.save_all(current_accounts)
+
+        return jsonify({"status": "success", "message": "Rejestr kont został zapisany do bazy danych."}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+@app.route('/api/accounts/load', methods=['POST'])
+def load_accounts():
+    """
+    Ładuje konta z bazy danych MongoDB do rejestru (nadpisując obecne).
+    """
+    try:
+        # Repozytorium czyści rejestr i ładuje nowe dane z bazy
+        mongo_repo.load_all(registry)
+
+        count = len(registry.accounts)
+        return jsonify({
+            "status": "success",
+            "message": f"Załadowano konta z bazy danych."
+        }), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
