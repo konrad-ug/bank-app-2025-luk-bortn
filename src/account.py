@@ -36,9 +36,9 @@ class Account:
         if self.pesel == "INVALID":
             return None
         digits = self.pesel[0:6]
-        year = int(digits[0]) * 10 + int(digits[1]) #format DD
-        month = int(digits[2]) * 10 + int(digits[3]) #format MM
-        day = int(digits[4]) * 10 + int(digits[5]) #format RR
+        year = int(digits[0]) * 10 + int(digits[1])
+        month = int(digits[2]) * 10 + int(digits[3])
+        day = int(digits[4]) * 10 + int(digits[5])
 
         if month >= 1 and month <= 12:
             year += 1900
@@ -73,24 +73,19 @@ class Account:
             return
 
     def express_outcoming_transfer(self, cash):
-        fee = 1  # Opłata za przelew
-
-        # 1. Sprawdzamy, czy masz dość pieniędzy na KWOTĘ + OPŁATĘ
-        # Jeśli saldo po odjęciu wszystkiego byłoby ujemne -> BŁĄD
+        fee = 1
         if cash <= 0 or (self.balance - (cash + fee)) < 0:
-            return False  # <--- Zmieniono None na False
+            return False
 
         else:
-            # 2. Zabieramy pieniądze
             self.balance -= (cash + fee)
             self.operations.append(-1 * (cash + fee))
 
-            return True  # <--- DODANO return True
+            return True
 
     def submit_for_loan(self, amount):
         """Sprawdza warunki przyznania kredytu."""
 
-        # WARUNEK 1 – ostatnie 3 transakcje to wpłaty (czyli dodatnie)
         if len(self.operations) >= 3:
             last_three = self.operations[-3:]
             if all(op > 0 for op in last_three):
@@ -98,15 +93,12 @@ class Account:
                 self.balance += amount
                 return True
 
-        # WARUNEK 2 – suma ostatnich 5 transakcji większa niż kwota kredytu
         if len(self.operations) >= 5:
             last_five_sum = sum(self.operations[-5:])
             if last_five_sum > amount:
                 self.loan += amount
                 self.balance += amount
                 return True
-
-        # jeśli żaden warunek nie został spełniony:
         return False
 
     def send_history_via_email(self, email):

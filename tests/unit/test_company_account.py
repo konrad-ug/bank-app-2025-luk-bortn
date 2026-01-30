@@ -1,8 +1,5 @@
 import pytest
 from src.company_account import CompanyAccount
-import datetime
-import os
-import requests
 
 @pytest.mark.skip(reason="Te testy łączą się z prawdziwym API - wyłączone na rzecz testów z mockami")
 class TestCompanyAccount:
@@ -15,48 +12,48 @@ class TestCompanyAccount:
         assert type(company.nip) is str
         assert len(company.nip) == 10
 
-        company = CompanyAccount("company Inc.", "01234567891") #dlugosc nieprawidowa
+        company = CompanyAccount("company Inc.", "01234567891")
         assert company.nip == "INVALID"
 
     def test_outcoming_transfer(self):
         company = CompanyAccount("company Inc.", "01234567891")
         company.balance = 100
         company.outcoming_transfer(-20)
-        assert company.balance == 100 # zla kwota przelewu
+        assert company.balance == 100
 
         company = CompanyAccount("company Inc.", "01234567891")
         company.balance = 100
         company.outcoming_transfer(200)
-        assert company.balance == 100 # kwota za duza
+        assert company.balance == 100
 
         company = CompanyAccount("company Inc.", "01234567891")
         company.balance = 100
         company.outcoming_transfer(20)
-        assert company.balance == 80 #dobry warunek
+        assert company.balance == 80
 
 
     def test_incoming_transfer(self):
         company = CompanyAccount("company Inc.", "01234567891")
         company.balance = 100
         company.incoming_transfer(20)
-        assert company.balance == 120 #dobry warunek
+        assert company.balance == 120
 
         company = CompanyAccount("company Inc.", "01234567891")
         company.balance = 100
         company.incoming_transfer(-20)
-        assert company.balance == 100 # zla kwota przelewu
+        assert company.balance == 100
 
     def test_express_outcoming_transfer(self):
         company = CompanyAccount("company Inc.", "01234567891")
         company.balance = 1000
-        company.express_outcoming_transfer(500) # 1000 - 505 == 495
+        company.express_outcoming_transfer(500)
 
         assert company.balance == 495
 
         company.balance = 20
-        company.express_outcoming_transfer(30) #stan konta za maly
+        company.express_outcoming_transfer(30)
         assert company.balance == 20
 
         company.balance = 500
-        company.express_outcoming_transfer(-20) # ujemny transfer srodkow
+        company.express_outcoming_transfer(-20)
         assert company.balance == 500

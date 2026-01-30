@@ -2,7 +2,8 @@ import requests
 
 class TestApiTransfer:
 
-    base_url = "http://127.0.0.1:5000/api/accounts"
+    base_url: str = "http://127.0.0.1:5000/api/accounts"
+    delete_url: str = "http://127.0.0.1:5000/api/accounts/"
 
     account = {
         "name": "James",
@@ -27,8 +28,8 @@ class TestApiTransfer:
         assert response.status_code == 200
         assert response.json()["message"] == "Transfer accepted"
 
-        # 3. Usuwamy konto
-        requests.delete(self.base_url)
+
+        requests.delete(self.delete_url + f"{self.account["pesel"]}")
 
 
     def test_transfer_account_not_found(self):
@@ -55,7 +56,7 @@ class TestApiTransfer:
         assert response.json()["message"] == "Invalid JSON"
 
         # 3. Usuwamy konto
-        requests.delete(self.base_url)
+        requests.delete(self.delete_url + f"{self.account["pesel"]}")
 
     def test_transfer_bad_amount(self):
         # 1. Tworzymy konto
@@ -74,7 +75,7 @@ class TestApiTransfer:
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid amount"
 
-        requests.delete(self.base_url)
+        requests.delete(self.delete_url + f"{self.account["pesel"]}")
 
     def test_transfer_bad_transfer_type(self):
         # 1. Tworzymy konto
@@ -88,7 +89,7 @@ class TestApiTransfer:
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid amount"
 
-        requests.delete(self.base_url)
+        requests.delete(self.delete_url + f"{self.account["pesel"]}")
 
     def test_transfer_express_not_enough_money(self):
         # 1. Tworzymy konto
@@ -102,7 +103,7 @@ class TestApiTransfer:
         assert response.status_code == 422
         assert response.json()["message"] == "Insufficient funds"
 
-        requests.delete(self.base_url)
+        requests.delete(self.delete_url + f"{self.account["pesel"]}")
 
 
     def test_transfer_outgoing_not_enough_money(self):
@@ -117,7 +118,7 @@ class TestApiTransfer:
         assert response.status_code == 422
         assert response.json()["message"] == "Insufficient funds"
 
-        requests.delete(self.base_url)
+        requests.delete(self.delete_url + f"{self.account["pesel"]}")
 
     def test_transfer_express_passed(self):
         requests.post(self.base_url, json=self.account)
@@ -131,3 +132,5 @@ class TestApiTransfer:
         response = requests.post(self.transfer_url, json=express_transfer)
 
         assert response.status_code == 200
+
+        requests.delete(self.delete_url + f"{self.account["pesel"]}")

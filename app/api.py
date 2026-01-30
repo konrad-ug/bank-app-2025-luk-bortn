@@ -76,7 +76,6 @@ def get_account(pesel):
 
 @app.route("/api/accounts/<pesel>", methods=['PATCH'])
 def update_account(pesel):
-    # 1. Pobierz dane do zmiany
     props = request.get_json()
     if props is None:
         return jsonify({"message": "Invalid JSON"}), 400

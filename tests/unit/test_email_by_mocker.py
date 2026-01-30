@@ -19,7 +19,7 @@ class TestEmailByMocker:
         assert not account.send_history_via_email("test@email.com")
 
     def test_personal_account_email_success(self, mocker, today_str):
-        #Mockowanie SMTPClient.send
+
         mock_send = mocker.patch('src.account.SMTPClient.send')
         mock_send.return_value = True
 
@@ -30,10 +30,10 @@ class TestEmailByMocker:
 
         email = "jan@nowak.pl"
 
-        # 2. Wykonanie akcji
+
         result = account.send_history_via_email(email)
 
-        # 3. Asercje
+
         assert result is True
         mock_send.assert_called_once_with(
             f"Account Transfer History {today_str}",
@@ -53,10 +53,9 @@ class TestEmailByMocker:
 
         email = "jan@nowak.pl"
 
-        # 4. Wykonanie akcji
         result = account.send_history_via_email(email)
 
-        # 5. Asercje
+
         assert result is True
         mock_send.assert_called_once_with(
             f"Account Transfer History {today_str}",
@@ -65,7 +64,6 @@ class TestEmailByMocker:
         )
 
     def test_company_account_email_server_error(self, mocker, today_str):
-        # serwer nie działa
         mocker.patch('src.company_account.CompanyAccount.check_status_Vat', return_value=True)
         mock_send = mocker.patch('src.company_account.SMTPClient.send', return_value=False)
 

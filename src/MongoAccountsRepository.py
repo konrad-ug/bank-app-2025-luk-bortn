@@ -26,5 +26,11 @@ class MongoAccountsRepository:
 
     def load_all(self, registry: AccountRegistry):
         registry.accounts = []
-        for acc in self._collection.find():
+        for acc in self._collection.find({}, {"_id": 0}):
             registry.add_account(acc)
+
+    def delete_all(self):
+        self._collection.delete_many({})
+
+    def get_raw_list(self):
+        return list(self._collection.find({}, {"_id": 0}))

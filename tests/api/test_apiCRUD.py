@@ -62,23 +62,19 @@ class TestApiCrud:
         assert response.json() == []
 
     def test_get_all_accounts(self):
-        # 1. Dodaj konto A
         obj1 = self.acc1.copy()
         obj1["pesel"] = "11111111111"
         requests.post(self.url, json=obj1)
 
-        # 2. Dodaj konto B
         obj2 = self.acc1.copy()
         obj2["pesel"] = "22222222222"
 
         requests.post(self.url, json=obj2)
         objects = [obj1, obj2]
 
-        # 3. Pobierz wszystkie konta
         response = requests.get(self.url)
         assert response.status_code == 200
 
-        # 4. Sprawdź, że GET zwraca listę *dwóch* kont
         assert len(response.json()) == 2
         for i in range(0, len(objects)):
 
@@ -86,17 +82,15 @@ class TestApiCrud:
             assert response.json()[i]["surname"] == objects[i]["surname"]
             assert response.json()[i]["pesel"] == objects[i]["pesel"]
 
-        # 5. Posprzątaj
         requests.delete(self.url + "/" + obj1["pesel"])
         requests.delete(self.url + "/" + obj2["pesel"])
 
     def test_get_account_count(self):
-        # 1. Dodaj konto A
+
         obj1 = self.acc1.copy()
         obj1["pesel"] = "11111111111"
         requests.post(self.url, json=obj1)
 
-        # 2. Dodaj konto B
         obj2 = self.acc1.copy()
         obj2["pesel"] = "22222222222"
 
@@ -110,12 +104,11 @@ class TestApiCrud:
         requests.delete(self.url + "/" + obj2["pesel"])
 
     def test_get_account_by_pesel_found(self):
-        # 1. Dodaj konto A
         obj1 = self.acc1.copy()
         obj1["pesel"] = "11111111111"
         requests.post(self.url, json=obj1)
 
-        # 2. Dodaj konto B
+
         obj2 = self.acc1.copy()
         obj2["pesel"] = "22222222222"
         requests.post(self.url, json=obj2)
@@ -123,7 +116,6 @@ class TestApiCrud:
         response = requests.get(self.url)
         assert response.status_code == 200
 
-        # Porównaj pola (pomijamy balance jeśli jest dodawany automatycznie)
         returned = response.json()[1]
 
         assert returned["name"] == obj2["name"]
@@ -140,35 +132,31 @@ class TestApiCrud:
         obj1["pesel"] = "11111111111"
         requests.post(self.url, json=obj1)
 
-        # 2. Dodaj konto B
         obj2 = self.acc1.copy()
         obj2["pesel"] = "22222222222"
         requests.post(self.url, json=obj2)
 
-        # PESEL, którego NIE MA w rejestrze
+
         missing_pesel = "99999999999"
 
-        # 3. Pobierz konto, które nie istnieje
         response = requests.get(self.url + "/" + missing_pesel)
 
-        # 4. Sprawdź odpowiedź
+
         assert response.status_code == 404
         assert response.json()["message"] == "Account not found"
 
-        # 5. Sprzątanie
         requests.delete(self.url + "/" + obj1["pesel"])
         requests.delete(self.url + "/" + obj2["pesel"])
 
     def test_update_account_passed(self):
-        # 1. Dodaj konto
+
         obj = self.acc1.copy()
         obj["pesel"] = "44444444444"
         requests.post(self.url, json=obj)
 
-        # 2. Przygotuj zmiany
         obj["name"] = "John"
         obj["surname"] = "Smith"
-        # 3. Wykonaj PUT z danymi
+
 
         response = requests.patch(self.url + "/" + obj["pesel"], json=obj)
 
@@ -179,7 +167,7 @@ class TestApiCrud:
         assert response.status_code == 200
         assert response.json()["message"] == "Account updated"
 
-        # (opcjonalnie) sprawdź, czy dane faktycznie się zmieniły
+
         get_response = requests.get(self.url + "/" + obj["pesel"])
 
         assert get_response.json()["name"] == "John"
@@ -189,7 +177,7 @@ class TestApiCrud:
         requests.delete(self.url + "/" + obj["pesel"])
 
     def test_update_account_not_found(self):
-        # Próbujemy zaktualizować konto, które nie istnieje
+
         pesel = "99999999999"
         changes = {"name": "Alice", "surname": "Wonder"}
 
@@ -199,19 +187,17 @@ class TestApiCrud:
         assert response.json()["message"] == "Account not found"
 
     def test_update_account_empty_json(self):
-        # Najpierw dodaj konto
+
         obj = self.acc1.copy()
         obj["pesel"] = "55555555555"
         requests.post(self.url, json=obj)
 
-        # Wyślij PATCH z pustym JSON
         response = requests.patch(self.url + "/" + obj["pesel"], json={})
 
-        # Powinno zwrócić 200, ale konto nie zmienione
+
         assert response.status_code == 200
         assert response.json()["message"] == "Account updated"
 
-        # Sprawdź, że dane są nadal te same
         get_response = requests.get(self.url + "/" + obj["pesel"])
         assert get_response.json()["name"] == obj["name"]
         assert get_response.json()["surname"] == obj["surname"]

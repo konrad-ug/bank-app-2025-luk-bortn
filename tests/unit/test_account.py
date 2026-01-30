@@ -8,32 +8,32 @@ class TestAccount:
 
     def test_account_create(self):
         account = Account("John", "Doe", "12345678910","")
-        assert account.name == "John" #sprawdzanie imienia
-        assert account.surname == "Doe" # sprawdzanie nazwiska
+        assert account.name == "John"
+        assert account.surname == "Doe"
 
     def test_balance(self):
         account = Account("John", "Doe", "12345678910", "promo")
-        assert type(account.balance) is float  # sprawdzanie balance
+        assert type(account.balance) is float
 
     def test_pesel(self):
         account = Account("John", "Doe", "12345678910", "promo")
-        assert account.pesel == "12345678910"  # sprawdzanie czy str, tylko cyfry i dlugosc 11
+        assert account.pesel == "12345678910"
 
         account = Account("John", "Doe", "123456789101", "promo")
-        assert account.pesel == "INVALID"  # sprawdzanie warunku blednego wpisania
+        assert account.pesel == "INVALID"
 
     def test_promo_code(self):
         account = Account("John", "Doe", "12345678910","")
-        assert account.promo_code is None # promo_code pusty
+        assert account.promo_code is None
 
         account = Account("John", "Doe", "12345678910", "PROM_1234")
-        assert account.promo_code is None # promo_code niepoprawny
+        assert account.promo_code is None
 
         account = Account("John", "Doe", "", "PROM_360")
-        assert account.promo_code is None # promo_code nie zaakceptowany przez brak wiek peselu
+        assert account.promo_code is None
 
         account = Account("John", "Doe", "59061212345", "PROM_360")
-        assert account.promo_code == "PROM_360" and account.balance == 50 # promo_code dla osoby urodzonej poniej niz rok 1960
+        assert account.promo_code == "PROM_360" and account.balance == 50
 
         account = Account("John", "Doe", "59061212345", "PROM_360")
 
@@ -67,16 +67,16 @@ class TestAccount:
     def test_express_outcoming_transfer(self):
         user = Account("Lukasz", "Bortnowski", "11111111111", "")
         user.balance = 1000
-        user.express_outcoming_transfer(500) # 1000 - 505 == 495
+        user.express_outcoming_transfer(500)
 
         assert user.balance == 499
 
         user.balance = 20
-        user.express_outcoming_transfer(30) #stan konta za maly
+        user.express_outcoming_transfer(30)
         assert user.balance == 20
 
         user.balance = 500
-        user.express_outcoming_transfer(-20) # ujemny transfer srodkow
+        user.express_outcoming_transfer(-20)
         assert user.balance == 500
 
     def test_get_birthday_date(self):
@@ -107,20 +107,20 @@ class TestAccount:
         assert user.get_birthday_date() == "24-01-1888"
 
     def test_apply_promo_code_old_user(self):
-        user = Account("a","B","40031512345","PROM_ABC")  # data: 15-03-1940
+        user = Account("a","B","40031512345","PROM_ABC")
         assert user.promo_code == "PROM_ABC"
         assert user.balance == 50  # +50 zł
 
     def test_apply_promo_code_young_user(self):
-        user = Account("A","B","04251312345", "PROM_ABC")  # data: 13-05-2004
+        user = Account("A","B","04251312345", "PROM_ABC")
         assert user.promo_code is None
         assert user.balance == 0  # bez zmian
 
     def test_apply_promo_code_triggers_promo_and_bonus(self):
-        user = Account("","","40031512345","PROM_ABC")  # rok 1940
-        # Linia 20
+        user = Account("","","40031512345","PROM_ABC")
+
         assert user.promo_code == "PROM_ABC"
-        # Linia 21
+
         assert user.balance == 50
 
 
