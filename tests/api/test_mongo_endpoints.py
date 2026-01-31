@@ -28,7 +28,7 @@ class TestMongoEndpoints:
         requests.delete(self.url_delete)
 
     def test_load_accounts(self):
-        pass
+        """ten test nie działa nie jestem w stanie rozwiązać tego problemu"""
         """
         try:
             self.mongoDB.delete_all()
