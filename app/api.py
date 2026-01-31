@@ -175,17 +175,27 @@ def save_accounts():
         return jsonify({"status": "success", "message": "Rejestr kont został zapisany do bazy danych."}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
 @app.route('/api/accounts/load', methods=['POST'])
 def load_accounts():
     """
     Ładuje konta z bazy danych MongoDB do rejestru (nadpisując obecne).
     """
-    mongo_repo.load_all(registry)
+    mongo_repo.load_all(registry)  # zwraca listę dictów
 
-    count = len(registry.accounts)
+    # konwersja dict → Account
+    registry.accounts = [
+        Account(
+            name=acc.get("name", ""),
+            surname=acc.get("surname", ""),
+            pesel=acc.get("pesel", ""),
+            promo_code=acc.get("promo_code")
+        )
+        for acc in registry.accounts
+    ]
+
     return jsonify({
         "status": "success",
-        "message": f"Załadowano konta z bazy danych."
+        "message": "Załadowano konta z bazy danych."
     }), 200
-
-

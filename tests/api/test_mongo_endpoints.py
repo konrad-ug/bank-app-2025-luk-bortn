@@ -28,8 +28,8 @@ class TestMongoEndpoints:
         requests.delete(self.url_delete)
 
     def test_load_accounts(self):
-        """"""
-        '''
+        pass
+        """
         try:
             self.mongoDB.delete_all()
             resp_add: requests.Response = requests.post(self.url, json={
@@ -60,5 +60,7 @@ class TestMongoEndpoints:
         finally:
             self.mongoDB.delete_all()
             requests.delete(self.url_delete)
-            '''
+            """
+
+
 
