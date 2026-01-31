@@ -47,7 +47,8 @@ def get_all_accounts():
         }
         for acc in accounts
     ]
-    return jsonify(accounts_data), 200
+    result = {"status": "success", "data": accounts_data}
+    return jsonify(result), 200
 
 
 @app.route("/api/accounts/count", methods=['GET'])
@@ -80,13 +81,13 @@ def update_account(pesel):
     if props is None:
         return jsonify({"message": "Invalid JSON"}), 400
 
-    # 2. Pobierz wszystkie konta
+
     accounts = registry.get_all_accounts()
 
-    # 3. Szukaj konta po peselu
+
     for account in accounts:
         if account.pesel == pesel:
-            # 4. Aktualizuj pola, które są w props
+
             if "name" in props:
                 account.name = props["name"]
             if "surname" in props:
@@ -94,10 +95,9 @@ def update_account(pesel):
             if "promo_code" in props:
                 account.promo_code = props["promo_code"]
 
-            # 5. Zwróć sukces
             return jsonify({"message": "Account updated"}), 200
 
-    # 6. Nie znaleziono konta
+
     return jsonify({"message": "Account not found"}), 404
 
 
@@ -107,15 +107,13 @@ def delete_account(pesel):
     accounts = registry.get_all_accounts()   # pobieramy TYLKO raz
     accounts_before = len(accounts)
 
-    # odfiltrowanie konta
+
     new_accounts = [acc for acc in accounts if acc.pesel != pesel]
     accounts_after = len(new_accounts)
 
-    # jeśli nic nie usunięto → konto nie istniało
     if accounts_after == accounts_before:
         return jsonify({"message": "Account not found"}), 404
 
-    # nadpisujemy listę tylko jeśli faktycznie coś się zmieniło
     registry.accounts = new_accounts
 
     return jsonify({"message": "Account deleted"}), 200
@@ -126,12 +124,12 @@ def delete_account(pesel):
 def transfer(pesel):
     body = request.get_json()
 
-    # 1. Konto istnieje?
+
     account = registry.get_account_by_pesel(pesel)
     if account is None:
         return jsonify({"message": "Account not found"}), 404
 
-    # 2. Walidacja body
+
     required_keys = {"type", "amount"}
     body_keys = set(body.keys())
     if body_keys != required_keys:
@@ -140,16 +138,14 @@ def transfer(pesel):
     amount = body["amount"]
     transfer_type = body["type"]
 
-    # 3. Walidacja amount
+
     if not isinstance(amount, (int, float)) or amount <= 0:
         return jsonify({"message": "Invalid amount"}), 400
 
-    # 4. Walidacja typu przelewu
     allowed_types = ("incoming", "outgoing", "express")
     if transfer_type not in allowed_types:
         return jsonify({"message": "Unknown transfer type"}), 400
 
-    # 5. Logika przelewów
     if transfer_type == "incoming":
         account.incoming_transfer(amount)
 
@@ -171,10 +167,9 @@ def save_accounts():
     Zapisuje obecny stan kont z rejestru do bazy danych MongoDB.
     """
     try:
-        # Pobieramy aktualną listę kont z rejestru
+
         current_accounts = registry.accounts
 
-        # Zapisujemy je do bazy przy użyciu repozytorium
         mongo_repo.save_all(current_accounts)
 
         return jsonify({"status": "success", "message": "Rejestr kont został zapisany do bazy danych."}), 200
@@ -185,15 +180,12 @@ def load_accounts():
     """
     Ładuje konta z bazy danych MongoDB do rejestru (nadpisując obecne).
     """
-    try:
-        # Repozytorium czyści rejestr i ładuje nowe dane z bazy
-        mongo_repo.load_all(registry)
+    mongo_repo.load_all(registry)
 
-        count = len(registry.accounts)
-        return jsonify({
-            "status": "success",
-            "message": f"Załadowano konta z bazy danych."
-        }), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+    count = len(registry.accounts)
+    return jsonify({
+        "status": "success",
+        "message": f"Załadowano konta z bazy danych."
+    }), 200
+
 

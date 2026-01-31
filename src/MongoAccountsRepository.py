@@ -1,6 +1,7 @@
 import os
 from pymongo import MongoClient
 from src.AccountRegistry import AccountRegistry
+from src.account import Account
 
 class MongoAccountsRepository:
     def __init__(self, mongo_uri=None, db_name=None, collection_name=None, collection=None):
@@ -27,7 +28,14 @@ class MongoAccountsRepository:
     def load_all(self, registry: AccountRegistry):
         registry.accounts = []
         for acc in self._collection.find({}, {"_id": 0}):
-            registry.add_account(acc)
+            account = Account(
+                name=acc["name"],
+                surname=acc["surname"],
+                pesel=acc["pesel"],
+                promo_code=acc.get("promo_code")
+            )
+
+            registry.add_account(account)
 
     def delete_all(self):
         self._collection.delete_many({})

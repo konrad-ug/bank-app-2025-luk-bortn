@@ -59,7 +59,7 @@ class TestApiCrud:
     def test_get_all_accounts_empty(self):
         response = requests.get(self.url)
         assert response.status_code == 200
-        assert response.json() == []
+        assert response.json()["data"] == []
 
     def test_get_all_accounts(self):
         obj1 = self.acc1.copy()
@@ -75,12 +75,12 @@ class TestApiCrud:
         response = requests.get(self.url)
         assert response.status_code == 200
 
-        assert len(response.json()) == 2
+        assert len(response.json()["data"]) == 2
         for i in range(0, len(objects)):
 
-            assert response.json()[i]["name"] == objects[i]["name"]
-            assert response.json()[i]["surname"] == objects[i]["surname"]
-            assert response.json()[i]["pesel"] == objects[i]["pesel"]
+            assert response.json()["data"][i]["name"] == objects[i]["name"]
+            assert response.json()["data"][i]["surname"] == objects[i]["surname"]
+            assert response.json()["data"][i]["pesel"] == objects[i]["pesel"]
 
         requests.delete(self.url + "/" + obj1["pesel"])
         requests.delete(self.url + "/" + obj2["pesel"])
@@ -116,7 +116,7 @@ class TestApiCrud:
         response = requests.get(self.url)
         assert response.status_code == 200
 
-        returned = response.json()[1]
+        returned = response.json()["data"][1]
 
         assert returned["name"] == obj2["name"]
         assert returned["surname"] == obj2["surname"]
